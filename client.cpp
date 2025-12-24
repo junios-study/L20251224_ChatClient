@@ -7,41 +7,11 @@
 #include <process.h>
 #include <iostream>
 
-#include <rapidjson/document.h>
-#include <rapidjson/writer.h>
-#include <rapidjson/stringbuffer.h>
-#include <string>
+#include "ChatPacket.h"
 
 #pragma comment(lib, "ws2_32")
 
 using namespace std;
-
-class Packet
-{
-public:
-	string UserName;
-	string Message;
-
-	string ToJsonString()
-	{
-		string Temp = "";
-		Temp = "{ \"UserName\" : ";
-		Temp = Temp + " \"" + UserName + "\", ";
-		Temp = Temp + " \"Message\" : ";
-		Temp = Temp + " \"" + Message + "\" }";
-
-		return Temp;
-	}
-
-	void Parse(string JsonString)
-	{
-		rapidjson::Document doc;
-		doc.Parse(JsonString.c_str());
-	
-		UserName = doc["UserName"].GetString();
-		Message = doc["Message"].GetString();
-	}
-};
 
 
 unsigned RecvThread(void* Arg)
@@ -77,11 +47,6 @@ unsigned SendThread(void* Arg)
 
 int main()
 {
-	Packet D;
-	cout << D.ToJsonString() << endl;
-
-	return 0;
-
 	WSAData wsaData;
 
 	WSAStartup(MAKEWORD(2, 2), &wsaData);
@@ -90,8 +55,8 @@ int main()
 	SOCKADDR_IN ServerSockAddr;
 	memset(&ServerSockAddr, 0, sizeof(ServerSockAddr));
 	ServerSockAddr.sin_family = AF_INET;
-	ServerSockAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
-	ServerSockAddr.sin_port = htons(33333);
+	ServerSockAddr.sin_addr.s_addr = inet_addr("218.156.17.164");
+	ServerSockAddr.sin_port = htons(30000);
 
 	int Result = connect(ServerSocket, (SOCKADDR*)&ServerSockAddr, sizeof(ServerSockAddr));
 
