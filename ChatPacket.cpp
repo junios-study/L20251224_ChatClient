@@ -1,19 +1,33 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include "ChatPacket.h"
+#include <sstream>
 
 std::string ChatPacket::ToJsonString()
 {
-	JsonDocument.SetObject();
-	JsonDocument.AddMember("UserName", UserName, JsonDocument.GetAllocator());
-	JsonDocument.AddMember("Message", Message, JsonDocument.GetAllocator());
-	JsonDocument.AddMember("Gold", Gold, JsonDocument.GetAllocator());
+	std::stringstream Stream;
 
-	rapidjson::StringBuffer Buffer;
-	rapidjson::Writer<rapidjson::StringBuffer> writer(Buffer);
-	JsonDocument.Accept(writer);
+	Stream << "{";
+	Stream << "\"UserName\" : ";
+	Stream << "\"" << UserName << "\"";
+	Stream << ", ";
+	Stream << "\"Message\" : ";
+	Stream << "\"" << Message << "\"";
+	Stream << ", ";
+	Stream << "\"Gold\" : ";
+	Stream << Gold;
+	Stream << "}";
 
-	return Buffer.GetString();
+	//JsonDocument.SetObject();
+	//JsonDocument.AddMember("UserName", UserName, JsonDocument.GetAllocator());
+	//JsonDocument.AddMember("Message", Message, JsonDocument.GetAllocator());
+	//JsonDocument.AddMember("Gold", Gold, JsonDocument.GetAllocator());
+
+	//rapidjson::StringBuffer Buffer;
+	//rapidjson::Writer<rapidjson::StringBuffer> writer(Buffer);
+	//JsonDocument.Accept(writer);
+
+	return Stream.str();
 }
 
 void ChatPacket::Parse(std::string JsonString)
