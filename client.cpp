@@ -53,7 +53,7 @@ int main()
 	SOCKADDR_IN ServerSockAddr;
 	memset(&ServerSockAddr, 0, sizeof(ServerSockAddr));
 	ServerSockAddr.sin_family = AF_INET;
-	ServerSockAddr.sin_addr.s_addr = inet_addr("112.171.99.20");
+	ServerSockAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
 	ServerSockAddr.sin_port = htons(33333);
 
 	int Result = connect(ServerSocket, (SOCKADDR*)&ServerSockAddr, sizeof(ServerSockAddr));
