@@ -26,6 +26,7 @@ unsigned RecvThread(void* Arg)
 	{
 		int PacketSize = 0;
 		int RecvBytes = recv(ServerSocket, (char*)&PacketSize, sizeof(PacketSize), MSG_WAITALL);
+
 		if (RecvBytes <= 0)
 		{
 			closesocket(ServerSocket);
@@ -71,7 +72,7 @@ unsigned SendThread(void* Arg)
 		int SendBytes = send(ServerSocket, (char*)&PacketSize, sizeof(PacketSize), 0);
 
 		//JSON String
-		SendBytes = send(ServerSocket, JSONString.c_str(), Data.Length() + 1, 0);
+		SendBytes = send(ServerSocket, JSONString.c_str(), Data.Length(), 0);
 	}
 	return 0;
 }
@@ -90,6 +91,7 @@ int main()
 	cout << "Name : ";
 	cin.getline(Buffer, 1024);
 	UserName = Buffer;
+	
 
 
 	SOCKET ServerSocket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
