@@ -35,7 +35,11 @@ public:
 
 	void Parse(string JsonString)
 	{
-
+		rapidjson::Document doc;
+		doc.Parse(JsonString.c_str());
+	
+		UserName = doc["UserName"].GetString();
+		Message = doc["Message"].GetString();
 	}
 };
 
