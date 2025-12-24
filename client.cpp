@@ -13,6 +13,8 @@
 
 using namespace std;
 
+string UserName;
+
 
 unsigned RecvThread(void* Arg)
 {
@@ -22,7 +24,24 @@ unsigned RecvThread(void* Arg)
 
 	while (true)
 	{
-		int RecvBytes = recv(ServerSocket, Buffer, sizeof(Buffer), 0);
+		int PacketSize = 0;
+		int RecvBytes = recv(ServerSocket, (char*)&PacketSize, sizeof(PacketSize), MSG_WAITALL);
+		if (RecvBytes <= 0)
+		{
+			closesocket(ServerSocket);
+			break;
+		}
+
+		PacketSize = ntohl(PacketSize);
+
+		//실제 패킷 사이즈만큼 기다림
+		char Buffer[4096] = { 0, };
+		RecvBytes = recv(ServerSocket, Buffer, PacketSize, MSG_WAITALL);
+		if (RecvBytes <= 0)
+		{
+			closesocket(ServerSocket);
+			break;
+		}
 
 		cout << Buffer << endl;
 	}
@@ -33,16 +52,31 @@ unsigned SendThread(void* Arg)
 {
 	SOCKET ServerSocket = *(SOCKET*)Arg;
 
-	char Buffer[1024] = { 0, };
 
 	while (true)
 	{
+		char Buffer[1024] = { 0, };
+
 		cout << "Chat : ";
 		cin.getline(Buffer, sizeof(Buffer));
-		int SendBytes = send(ServerSocket, Buffer, (int)strlen(Buffer) + 1, 0);
+
+		ChatPacket Data;
+		Data.UserName = UserName;
+		Data.Message = Buffer;
+		string JSONString = Data.ToJsonString();
+		int PacketSize = Data.Length();
+		PacketSize = htonl(PacketSize);
+
+		//JSON 패킷 크기(header)
+		int SendBytes = send(ServerSocket, (char*)&PacketSize, sizeof(PacketSize), 0);
+
+		//JSON String
+		SendBytes = send(ServerSocket, JSONString.c_str(), Data.Length() + 1, 0);
 	}
 	return 0;
 }
+
+
 
 
 int main()
@@ -50,6 +84,13 @@ int main()
 	WSAData wsaData;
 
 	WSAStartup(MAKEWORD(2, 2), &wsaData);
+
+	char Buffer[1024] = { 0, };
+
+	cout << "Name : ";
+	cin.getline(Buffer, 1024);
+	UserName = Buffer;
+
 
 	SOCKET ServerSocket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
 	SOCKADDR_IN ServerSockAddr;
