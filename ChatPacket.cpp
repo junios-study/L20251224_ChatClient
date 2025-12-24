@@ -1,14 +1,19 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 #include "ChatPacket.h"
 
 std::string ChatPacket::ToJsonString()
 {
-	std::string Temp = "";
-	Temp = "{ \"UserName\" : ";
-	Temp = Temp + " \"" + UserName + "\", ";
-	Temp = Temp + " \"Message\" : ";
-	Temp = Temp + " \"" + Message + "\" }";
+	JsonDocument.SetObject();
+	JsonDocument.AddMember("UserName", UserName, JsonDocument.GetAllocator());
+	JsonDocument.AddMember("Message", Message, JsonDocument.GetAllocator());
+	JsonDocument.AddMember("Gold", Gold, JsonDocument.GetAllocator());
 
-	return Temp;
+	rapidjson::StringBuffer Buffer;
+	rapidjson::Writer<rapidjson::StringBuffer> writer(Buffer);
+	JsonDocument.Accept(writer);
+
+	return Buffer.GetString();
 }
 
 void ChatPacket::Parse(std::string JsonString)
@@ -17,6 +22,7 @@ void ChatPacket::Parse(std::string JsonString)
 
 	UserName = JsonDocument["UserName"].GetString();
 	Message = JsonDocument["Message"].GetString();
+	Gold = JsonDocument["Gold"].GetInt();
 }
 
 int ChatPacket::Length()

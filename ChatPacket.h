@@ -1,5 +1,7 @@
 #pragma once
 
+#define RAPIDJSON_HAS_STDSTRING 1
+
 #include <rapidjson/document.h>
 #include <rapidjson/writer.h>
 #include <rapidjson/stringbuffer.h>
@@ -15,6 +17,7 @@ class ChatPacket : public IPacket
 public:
 	std::string UserName;
 	std::string Message;
+	int Gold;
 
 	virtual std::string ToJsonString() override;
 
