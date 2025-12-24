@@ -7,9 +7,37 @@
 #include <process.h>
 #include <iostream>
 
+#include <rapidjson/document.h>
+#include <rapidjson/writer.h>
+#include <rapidjson/stringbuffer.h>
+#include <string>
+
 #pragma comment(lib, "ws2_32")
 
 using namespace std;
+
+class Packet
+{
+public:
+	string UserName;
+	string Message;
+
+	string ToJsonString()
+	{
+		string Temp = "";
+		Temp = "{ \"UserName\" : ";
+		Temp = Temp + " \"" + UserName + "\", ";
+		Temp = Temp + " \"Message\" : ";
+		Temp = Temp + " \"" + Message + "\" }";
+
+		return Temp;
+	}
+
+	void Parse(string JsonString)
+	{
+
+	}
+};
 
 
 unsigned RecvThread(void* Arg)
@@ -45,6 +73,11 @@ unsigned SendThread(void* Arg)
 
 int main()
 {
+	Packet D;
+	cout << D.ToJsonString() << endl;
+
+	return 0;
+
 	WSAData wsaData;
 
 	WSAStartup(MAKEWORD(2, 2), &wsaData);
